@@ -11,12 +11,19 @@ class Venta extends Model
     protected $fillable = [
         'user_id',
         'Folio',
-        'Total', 
+        'Total',
+        'DireccionEnvio', 
         'metodoenvio_id',
         'metodopago_id'
     ];
 
     public function Detalles(){
         return $this->hasMany('App\Models\DetalleVenta');
+    }
+    public function MetodoEnvio(){
+        return $this->belongsTo('App\Models\MetodoEnvio');
+    }
+    public function MetodoPago(){
+        return $this->belongsTo('App\Models\MetodoPago');
     }
 }

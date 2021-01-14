@@ -15,6 +15,7 @@ class InformacionContacto extends Model
         'Email',
         'Telefono',
         'TelefonoMovil',
+        'user_id',
     ];
     public function User(){
         return $this->belongsTo('App\Models\User');

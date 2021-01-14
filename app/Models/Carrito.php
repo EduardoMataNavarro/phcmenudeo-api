@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Carrito extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'Articulos',
+    ];
+    public function Detalles(){
+        return $this->hasMany('App\Models\CarritoDetalles');
+    }
 }

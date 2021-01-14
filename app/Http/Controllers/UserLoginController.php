@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
-class LoginController extends Controller
+class UserLoginController extends Controller
 {
     //
     public function Login(Request $request) {
@@ -13,16 +14,16 @@ class LoginController extends Controller
         
             if(Auth::attempt($credentials)) {
                 $email = $request->input('email');
-                $user = User::where('Correo', $email)->get();
+                $user = User::where('email', $email)->first();
                 return response()->json([ 
-                    "message" => "success", 
+                    "success" => "success", 
                     "user_id" => $user->id,
-                    "user_name" => $user->Nombre,
+                    "user_name" => $user->name,
                     ]);
             }
             else {
                 return response()->json([ 
-                    "message" => "No se puede autenticar al usuario, por favor revise sus credenciales" 
+                    "error" => "No se puede autenticar al usuario, por favor revise sus credenciales" 
                     ]);
             }
     }

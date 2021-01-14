@@ -15,11 +15,13 @@ class CreateVentasTable extends Migration
     {
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
-            $table->string('Folio')->unique();
+            $table->string('Folio')->unique()->nullable();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('metodoenvio_id');
-            $table->unsignedBigInteger('metodopago_id');
+            $table->unsignedBigInteger('metodoenvio_id')->nullable();
+            $table->unsignedBigInteger('metodopago_id')->nullable();
+            $table->string('DireccionEnvio')->nullable();
             $table->decimal('Total', 8, 2);
+            $table->enum('Estatus', ['iniciada', 'terminada', 'cancelada', 'entregada']);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

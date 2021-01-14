@@ -9,6 +9,11 @@ use App\Models\DetalleInventario;
 class InventarioController extends Controller
 {
     //
+    public function Index() {
+        $inventarios = Inventario::with('Sucursal')->with('Articulo')->get();
+        return response()->json($inventarios);
+    }
+
     public function Create(Request $request) {
         $clave = $request->input('clave');
         $articulo = $request->input('articulo');
@@ -17,17 +22,24 @@ class InventarioController extends Controller
 
         $newInventario = Inventario::create([
             'Clave' => $clave,
-            'Sucursal' => $sucursal,
-            'Articulo' => $articulo,
+            'sucursal_id' => $sucursal,
+            'articulo_id' => $articulo,
             'Cantidad' => $cantidad,
         ]);
         $newInventario->save();
 
-        return response()->json($newInventario);
+        $newDetalleInventario = DetalleInventario::create([
+            'inventario_id' => $newInventario->id,
+            'Tipo' => 'entrada',
+            'Cantidad' => $cantidad,
+        ]);
+        $newDetalleInventario->save();
+
+        return response()->json($newInventario->with('Detalles')->where('id', $newInventario->id)->first());
     }
 
     public function Edit(Request $request) {
-        $inventarioid = input('inventarioid');
+        $inventarioid = $request->input('inventarioid');
         $clave = $request->input('clave');
         $articulo = $request->input('articulo');
         $sucursal = $request->input('sucursal');
@@ -43,8 +55,13 @@ class InventarioController extends Controller
         return response()->json($inventario);
     }
     
-    public function GetMovimientos($id){
-        $inventario = Inventario::find($id)->with('DetalleInventario');
+    public function GetMovimientos($inventarioid){
+        $inventario = Inventario::find($inventarioid)->with('DetalleInventario');
+        return response()->json($inventario);
+    }
+
+    public function GetById($id) {
+        $inventario = Inventario::find($id)->with('Detalles')->first();
         return response()->json($inventario);
     }
 
@@ -70,6 +87,24 @@ class InventarioController extends Controller
             $newMovimiento->save();
             $inventarioDetails = $inventario->Movimientos;
             return response()->json(['message' => 'success', 'inventario' => $inventarioDetails]);
+        }
+    }
+
+    public function Check(Request $request) {
+        $sucursalid = $request->input('sucursalid');
+        $articuloid = $request->input('articuloid');
+        $inventario = Inventario::where('articulo_id', $articuloid)
+                                ->where('sucursal_id', $sucursalid)->first();
+        if ($inventario) {
+            if ($inventario->Cantidad > 0) {
+                return response()->json(['message' => 'En inventario', 'cantidad' => $inventario->Cantidad]);
+            }
+            else {
+                return response()->json(['message' => 'Agotado', 'cantidad' => 0]);
+            }
+        }
+        else {
+            return response()->json(['message' => 'No inventariado', 'cantidad' => 0]);
         }
     }
 }

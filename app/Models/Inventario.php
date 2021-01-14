@@ -18,4 +18,10 @@ class Inventario extends Model
     public function Detalles(){
         return $this->hasMany('App\Models\DetalleInventario');
     }
+    public function Articulo(){
+        return $this->belongsTo('App\Models\Articulo');
+    }
+    public function Sucursal(){
+        return $this->belongsTo('App\Models\Sucursal');
+    }
 }

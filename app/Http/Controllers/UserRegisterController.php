@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\InformacionContacto;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Mail\CorreoRegistro;
-use App\Http\Models\User;
-use App\Http\Models\InformacionContacto;
 
-class RegisterUserController extends Controller
+class UserRegisterController extends Controller
 {
     //
     public function Create(Request $request){
@@ -30,27 +30,30 @@ class RegisterUserController extends Controller
         Log::emergency('Correo del usuario = ' . $Correo);
 
         $newUser = User::create([
-            'Nombre' => $Nombre,
+            'name' => $Nombre,
             'RFC' => $RFC,
-            'Correo' => $Correo,
-            'Password' => Hash::make($securepassword),
-            'Estado' => $Estado,
-            'Sucursal' => $Sucursal,
+            'email' => $Correo,
+            'Telefono' => $Telefono,
+            'Direccion' => $Direccion,
+            'password' => Hash::make($securepassword),
+            'estado_id' => $Estado,
+            'sucursal_id' => $Sucursal,
         ]);
         $newUser->save();
 
         $newInfoContacto = InformacionContacto::create([
             'Nombre' => $InfoContacto['nombre'],
             'Puesto' => $InfoContacto['puesto'],
-            'Direccion' => $InfoContacto['email'],
+            'Direccion' => $InfoContacto['correo'],
             'Telefono' => $InfoContacto['telefono'],
-            'TelefonoMovil' => $InfoContacto['telefonoMovil'],
+            'TelefonoMovil' => $InfoContacto['movil'],
+            'user_id' => $newUser->id,
         ]);
         $newInfoContacto->save();
         $newUser->informacioncontacto_id = $newInfoContacto->id;
         $newUser->save();
 
-        Mail::to('test@tester.com')->send(new CorreoRegistro($securepassword));
+        Mail::to($newUser->email)->send(new CorreoRegistro($securepassword));
 
         return response()->json([ 'message' => 'Revise su correo para poder iniciar sesión con nosotros' ]);        
     }
