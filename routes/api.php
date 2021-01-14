@@ -90,7 +90,7 @@ Route::delete('/carrito/detalle/{id}', 'App\Http\Controllers\CarritoController@D
 Route::post('/rol', 'App\Http\Controllers\RolController@Create');
 Route::put('/rol', 'App\Http\Controllers\RolController@Edit');
 Route::get('/rol', 'App\Http\Controllers\RolController@Index');
-Route::get('/rol/{userid}', 'App\Http\Controllers\RolController@GetByUser');  
+Route::get('/rol/{id}', 'App\Http\Controllers\RolController@GetById');  
 
 /* Metodo envio */
 Route::post('/metodoenvio', 'App\Http\Controllers\MetodoEnvioController@Create');
