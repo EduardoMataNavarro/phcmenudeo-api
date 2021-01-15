@@ -74,17 +74,24 @@ Route::get('/movimientoinventario/{inventarioid}', 'App\Http\Controllers\Inventa
 
 /* Venta */
 Route::post('/venta', 'App\Http\Controllers\VentaController@Create');
+Route::get('/venta/get/{id}', 'App\Http\Controllers\VentaController@GetById');
 Route::post('/venta/carrito', 'App\Http\Controllers\VentaController@CreateFromCarrito');
 Route::put('/venta', 'App\Http\Controllers\VentaController@Edit');
 Route::get('/venta', 'App\Http\Controllers\VentaController@Index');
-Route::post('/venta/check', 'App\Http\Controllers\VentaController@GetById'); 
+Route::post('/venta/check', 'App\Http\Controllers\VentaController@Check'); 
+Route::post('/venta/confirm', 'App\Http\Controllers\VentaController@ConfirmAndMail'); 
+/* Detalle venta */
+Route::get('/ventadetalles/{ventaid}', 'App\Http\Controllers\DetalleVentaController@GetDetalles'); 
+Route::put('/ventadetalles', 'App\Http\Controllers\DetalleVentaController@Edit');
+Route::get('/ventadetalles', 'App\Http\Controllers\DetalleVentaController@GetDetalles');
 
 /* Carrito */
 Route::post('/carrito', 'App\Http\Controllers\CarritoController@AddToCart');
 Route::get('/carrito', 'App\Http\Controllers\CarritoController@Index');
 Route::get('/carrito/user/{userid}', 'App\Http\Controllers\CarritoController@GetByUser'); 
-Route::get('/carrito/detalle/{userid}', 'App\Http\Controllers\CarritoController@GetDetalles');
-Route::delete('/carrito/detalle/{id}', 'App\Http\Controllers\CarritoController@DeleteFromCart');
+/* Carrito detalles */
+Route::get('/carritodetalle/{id}', 'App\Http\Controllers\CarritoDetallesController@GetByCarrito');
+Route::delete('/carritodetalle/{id}', 'App\Http\Controllers\CarritoDetallesController@Delete');
 
 /* Rol */
 Route::post('/rol', 'App\Http\Controllers\RolController@Create');
@@ -103,4 +110,9 @@ Route::post('/metodopago', 'App\Http\Controllers\MetodoPagoController@Create');
 Route::put('/metodopago', 'App\Http\Controllers\MetodoPagoController@Edit');
 Route::get('/metodopago', 'App\Http\Controllers\MetodoPagoController@Index');
 Route::get('/metodopago/{id}', 'App\Http\Controllers\MetodoPagoController@GetById');  
+
+/* Dashboard routes */
+Route::get('/dashboard/toparticulos', 'App\Http\Controllers\DashboardController@GetTopArticulos');
+Route::get('/dashboard/totalmes', 'App\Http\Controllers\DashboardController@GetTotalMes'); 
+Route::get('/dashboard/totalcompras', 'App\Http\Controllers\DashboardController@GetTotalCompras'); 
 

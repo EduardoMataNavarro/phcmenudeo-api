@@ -20,6 +20,7 @@ class CreateVentasTable extends Migration
             $table->unsignedBigInteger('metodoenvio_id')->nullable();
             $table->unsignedBigInteger('metodopago_id')->nullable();
             $table->string('DireccionEnvio')->nullable();
+            $table->decimal('Subtotal', 8, 2);
             $table->decimal('Total', 8, 2);
             $table->enum('Estatus', ['iniciada', 'terminada', 'cancelada', 'entregada']);
             $table->timestamps();

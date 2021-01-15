@@ -56,21 +56,6 @@ class CarritoController extends Controller
                             ->with('Detalles')->get();
         return response()->json($detalles);
     }
-    public function DeleteFromCart(Request $request) {
-        $detalleid = $request->input('detalleid');
-        $detalle = CarritoDetalles::find($detalleid);
-        if ($detalle) {
-            if($detalle->delete()){
-                return response()->json(['message' => 'El articulo ha sido eliminado del carrito']);
-            }
-            else {
-                return response()->json(['message' => 'El articulo no se ha podido eliminar de su carrito']);
-            }
-        }
-        else {
-            return response()->json(['message' => 'El articulo ya no existe en el carrito']);
-        }
-    }
     
     public function GetByUser($userid) {
         $carrito = Carrito::where('user_id', $userid)->first();

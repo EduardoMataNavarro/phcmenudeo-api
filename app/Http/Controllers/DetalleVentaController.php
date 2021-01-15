@@ -2,84 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetalleVenta;
 use Illuminate\Http\Request;
+use App\Models\DetalleVenta;
+use App\Models\Venta;
+use App\Models\Articulo;
 
 class DetalleVentaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    //
+    public function Edit(Request $request) {
+        $detalleid = $request->input('detalleid');
+        $cantidad = $request->input('cantidad');
+        $sucursalid = $request->input('sucursalid');
+
+        $detalle = DetalleVenta::find($detalleid);
+        $articulo = Articulo::find($detalle->articulo_id);
+
+        $detalle->sucursal_id = $sucursalid;
+        $detalle->Cantidad = $cantidad;
+        $detalle->Monto = $detalle->Cantidad * (($detalle->Cantidad >= $articulo->CantidadMayoreo) ? $articulo->PrecioMayoreo : $articulo->Precio);
+        $detalle->save();
+
+        return response()->json($detalle);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+    public function GetDetalles($id) {
+        $detalles = DetalleVenta::where('venta_id', $id)->with('Articulo')->with('Sucursal')->get();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+        return response()->json($detalles);
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\DetalleVenta  $detalleVenta
-     * @return \Illuminate\Http\Response
-     */
-    public function show(DetalleVenta $detalleVenta)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\DetalleVenta  $detalleVenta
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(DetalleVenta $detalleVenta)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\DetalleVenta  $detalleVenta
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, DetalleVenta $detalleVenta)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\DetalleVenta  $detalleVenta
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(DetalleVenta $detalleVenta)
-    {
-        //
+    public function Delete($id) {
+        $detalle = DetalleVenta::find($id);
+        $ventaDetalles = Venta::find($detalle->venta_id)->with('Detalles')->where('id', $detalle->venta_id)->first();
+        if (count($venta->detalles) > 1) {
+            if ($detalle->delete()) {
+                return response(['message' => 'Se ha eliminado el detalle']);
+            }
+            else {
+                return response()->json(['message' => 'No se ha elminado el detalle']);
+            }
+        }
+        else {
+            return response()->json(['message' => 'No se puede elminar el detalle de la venta']);
+        }
     }
 }
